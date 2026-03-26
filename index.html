@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #c8f04a;
+    --accent2: #7b61ff;
+    --text: #f0f0f5;
+    --muted: #7a7a8c;
+    --error: #ff5e6c;
+    --success: #4af09a;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(123,97,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(200,240,74,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .header-tag {
+    display: inline-block;
+    background: rgba(200,240,74,0.12);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid rgba(200,240,74,0.25);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 52px);
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    animation: fadeUp 0.7s ease both;
+    animation-delay: 0.1s;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+  }
+
+  .section { margin-bottom: 36px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .card { padding: 24px; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  label .req { color: var(--accent); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="url"],
+  textarea,
+  select {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(123,97,255,0.15);
+  }
+
+  input.valid { border-color: var(--success); }
+  input.invalid, textarea.invalid, select.invalid { border-color: var(--error); }
+
+  textarea { resize: vertical; min-height: 90px; }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    display: none;
+  }
+
+  .error-msg {
+    font-size: 11px;
+    color: var(--error);
+    margin-top: 3px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .error-msg::before { content: '✕'; font-size: 10px; }
+
+  .success-msg {
+    font-size: 11px;
+    color: var(--success);
+    margin-top: 3px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .success-msg::before { content: '✓'; font-size: 10px; }
+
+  .show { display: flex !important; }
+
+  /* Photo Upload */
+  .photo-upload {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--surface2);
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .photo-upload:hover { border-color: var(--accent2); }
+
+  .photo-preview {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+  .photo-info p { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 2px; }
+  .photo-info span { font-size: 11px; color: var(--muted); }
+
+  input[type="file"] { display: none; }
+
+  /* Password strength */
+  .password-wrap { position: relative; }
+  .toggle-pw {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+  }
+  .toggle-pw:hover { color: var(--text); }
+
+  .strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .strength-bar span {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .strength-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Radio */
+  .radio-group { display: flex; gap: 12px; }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text);
+  }
+
+  .radio-label input[type="radio"] { display: none; }
+
+  .radio-label:has(input:checked) {
+    border-color: var(--accent);
+    background: rgba(200,240,74,0.08);
+    color: var(--accent);
+  }
+
+  .radio-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s;
+  }
+
+  .radio-label:has(input:checked) .radio-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,240,74,0.2);
+  }
+
+  /* Checkboxes */
+  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+
+  .cb-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.2s;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .cb-label input[type="checkbox"] { display: none; }
+
+  .cb-label:has(input:checked) {
+    border-color: var(--accent2);
+    background: rgba(123,97,255,0.1);
+    color: var(--text);
+  }
+
+  .cb-box {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px;
+    transition: all 0.2s;
+  }
+
+  .cb-label:has(input:checked) .cb-box {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: white;
+  }
+
+  /* Multi-select */
+  .multi-select { position: relative; }
+
+  .ms-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    min-height: 48px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .ms-tags:focus-within { border-color: var(--accent2); }
+
+  .ms-tag {
+    background: rgba(123,97,255,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(123,97,255,0.3);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ms-tag button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+  }
+
+  .ms-tag button:hover { opacity: 1; }
+
+  .ms-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: var(--surface2);
+    border: 1.5px solid var(--accent2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .ms-dropdown.open { display: block; }
+
+  .ms-option {
+    padding: 10px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.1s;
+    color: var(--muted);
+  }
+
+  .ms-option:hover { background: rgba(123,97,255,0.1); color: var(--text); }
+  .ms-option.selected { color: var(--accent2); background: rgba(123,97,255,0.08); }
+
+  .ms-placeholder { color: var(--muted); font-size: 13px; padding: 2px 4px; }
+
+  /* Select styling */
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+    font-size: 12px;
+  }
+
+  select option { background: var(--surface2); }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-reset {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-reset:hover {
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .btn-submit {
+    background: var(--accent);
+    color: #0d0d0f;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,240,74,0.3); }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--surface2);
+    border: 1px solid var(--success);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--success);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="header-tag">New Account</div>
+    <h1>Create your <em>Profile</em></h1>
+    <p class="subtitle">Fill in the details below to get started.</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Personal Info -->
+    <div class="section">
+      <div class="section-title">Personal Information</div>
+      <div style="display:grid;gap:18px;">
+
+        <div class="field">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="fullName" placeholder="e.g. Jane Doe" oninput="validateName(this)">
+          <span class="error-msg" id="fullName-err">Name must be at least 3 characters.</span>
+          <span class="success-msg" id="fullName-ok">Looks good!</span>
+        </div>
+
+        <div class="field">
+          <label>Profile Photo</label>
+          <label class="photo-upload" for="photoInput">
+            <div class="photo-preview" id="photoPreview">📷</div>
+            <div class="photo-info">
+              <p>Click to upload a photo</p>
+              <span>JPG, PNG or GIF · Max 5MB</span>
+            </div>
+          </label>
+          <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Email Address <span class="req">*</span></label>
+            <input type="email" id="email" placeholder="you@example.com" oninput="validateEmail(this)">
+            <span class="error-msg" id="email-err">Enter a valid email address.</span>
+            <span class="success-msg" id="email-ok">Valid email!</span>
+          </div>
+
+          <div class="field">
+            <label>Password <span class="req">*</span></label>
+            <div class="password-wrap">
+              <input type="password" id="password" placeholder="Min 8 characters" oninput="validatePassword(this)">
+              <button type="button" class="toggle-pw" onclick="togglePw()" title="Show/Hide">👁</button>
+            </div>
+            <div class="strength-bar">
+              <span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span>
+            </div>
+            <div class="strength-label" id="strengthLabel">—</div>
+            <span class="error-msg" id="password-err">Min 8 chars, include a number & symbol.</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Phone Number <span class="req">*</span></label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210" oninput="validatePhone(this)">
+            <span class="error-msg" id="phone-err">Enter a valid phone number.</span>
+            <span class="success-msg" id="phone-ok">Valid!</span>
+          </div>
+
+          <div class="field">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input type="date" id="dob" onchange="validateDob(this)">
+            <span class="error-msg" id="dob-err">You must be at least 13 years old.</span>
+            <span class="success-msg" id="dob-ok">Valid!</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Gender <span class="req">*</span></label>
+          <div class="radio-group" id="genderGroup">
+            <label class="radio-label">
+              <input type="radio" name="gender" value="male" onchange="validateGender()">
+              <div class="radio-dot"></div> Male
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="gender" value="female" onchange="validateGender()">
+              <div class="radio-dot"></div> Female
+            </label>
+          </div>
+          <span class="error-msg show" id="gender-err" style="display:none!important;">Please select a gender.</span>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Address -->
+    <div class="section">
+      <div class="section-title">Address</div>
+      <div style="display:grid;gap:18px;">
+
+        <div class="field">
+          <label>Address <span class="req">*</span></label>
+          <textarea id="address" placeholder="Street, Apartment, Building…" oninput="validateRequired(this,'address-err','address-ok','Address is required.')"></textarea>
+          <span class="error-msg" id="address-err">Address is required.</span>
+          <span class="success-msg" id="address-ok">Got it!</span>
+        </div>
+
+        <div class="grid-3">
+          <div class="field">
+            <label>City <span class="req">*</span></label>
+            <input type="text" id="city" placeholder="Chennai" oninput="validateRequired(this,'city-err','city-ok','City is required.')">
+            <span class="error-msg" id="city-err">City is required.</span>
+            <span class="success-msg" id="city-ok">✓</span>
+          </div>
+
+          <div class="field">
+            <label>State <span class="req">*</span></label>
+            <input type="text" id="state" placeholder="Tamil Nadu" oninput="validateRequired(this,'state-err','state-ok','State is required.')">
+            <span class="error-msg" id="state-err">State is required.</span>
+            <span class="success-msg" id="state-ok">✓</span>
+          </div>
+
+          <div class="field">
+            <label>Country <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select id="country" onchange="validateSelect(this,'country-err')">
+                <option value="">Select country</option>
+                <option value="IN">India</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="AU">Australia</option>
+                <option value="CA">Canada</option>
+                <option value="SG">Singapore</option>
+                <option value="AE">UAE</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="JP">Japan</option>
+              </select>
+            </div>
+            <span class="error-msg" id="country-err">Please select a country.</span>
+          </div>
+        </div>
+
+        <div class="field" style="max-width:200px;">
+          <label>Pincode <span class="req">*</span></label>
+          <input type="text" id="pincode" placeholder="600001" maxlength="10" oninput="validatePincode(this)">
+          <span class="error-msg" id="pincode-err">Enter a valid pincode (4–10 digits).</span>
+          <span class="success-msg" id="pincode-ok">Valid!</span>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Interests -->
+    <div class="section">
+      <div class="section-title">Interests & Skills</div>
+      <div style="display:grid;gap:22px;">
+
+        <div class="field">
+          <label>Hobbies <span class="req">*</span> <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(select min. 2)</span></label>
+          <div class="checkbox-grid" id="hobbiesGroup">
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Reading" onchange="validateHobbies()"><div class="cb-box">✓</div>Reading</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Traveling" onchange="validateHobbies()"><div class="cb-box">✓</div>Traveling</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Gaming" onchange="validateHobbies()"><div class="cb-box">✓</div>Gaming</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Cooking" onchange="validateHobbies()"><div class="cb-box">✓</div>Cooking</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Music" onchange="validateHobbies()"><div class="cb-box">✓</div>Music</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Photography" onchange="validateHobbies()"><div class="cb-box">✓</div>Photography</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Sports" onchange="validateHobbies()"><div class="cb-box">✓</div>Sports</label>
+            <label class="cb-label"><input type="checkbox" name="hobbies" value="Art" onchange="validateHobbies()"><div class="cb-box">✓</div>Art & Design</label>
+          </div>
+          <span class="error-msg" id="hobbies-err">Please select at least 2 hobbies.</span>
+          <span class="success-msg" id="hobbies-ok">Great picks!</span>
+        </div>
+
+        <div class="field">
+          <label>Skills <span class="req">*</span></label>
+          <div class="multi-select">
+            <div class="ms-tags" id="msTags" onclick="toggleMs()">
+              <span class="ms-placeholder" id="msPlaceholder">Click to select skills…</span>
+            </div>
+            <div class="ms-dropdown" id="msDropdown">
+              <div class="ms-option" onclick="toggleSkill(this,'JavaScript')">JavaScript</div>
+              <div class="ms-option" onclick="toggleSkill(this,'Python')">Python</div>
+              <div class="ms-option" onclick="toggleSkill(this,'UI/UX Design')">UI/UX Design</div>
+              <div class="ms-option" onclick="toggleSkill(this,'React')">React</div>
+              <div class="ms-option" onclick="toggleSkill(this,'Node.js')">Node.js</div>
+              <div class="ms-option" onclick="toggleSkill(this,'Data Analysis')">Data Analysis</div>
+              <div class="ms-option" onclick="toggleSkill(this,'Project Management')">Project Management</div>
+              <div class="ms-option" onclick="toggleSkill(this,'Content Writing')">Content Writing</div>
+              <div class="ms-option" onclick="toggleSkill(this,'Marketing')">Marketing</div>
+              <div class="ms-option" onclick="toggleSkill(this,'DevOps')">DevOps</div>
+            </div>
+          </div>
+          <span class="error-msg" id="skills-err">Please select at least one skill.</span>
+          <span class="success-msg" id="skills-ok">Skills added!</span>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Links & Bio -->
+    <div class="section">
+      <div class="section-title">Online Presence</div>
+      <div style="display:grid;gap:18px;">
+
+        <div class="grid-2">
+          <div class="field">
+            <label>LinkedIn Profile (URL)</label>
+            <input type="url" id="linkedin" placeholder="https://linkedin.com/in/you" oninput="validateURL(this,'linkedin-err','linkedin-ok')">
+            <span class="error-msg" id="linkedin-err">Enter a valid URL (https://…)</span>
+            <span class="success-msg" id="linkedin-ok">Valid!</span>
+          </div>
+
+          <div class="field">
+            <label>Portfolio Website (URL)</label>
+            <input type="url" id="portfolio" placeholder="https://yoursite.com" oninput="validateURL(this,'portfolio-err','portfolio-ok')">
+            <span class="error-msg" id="portfolio-err">Enter a valid URL (https://…)</span>
+            <span class="success-msg" id="portfolio-ok">Valid!</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>About Yourself <span class="req">*</span></label>
+          <textarea id="about" rows="4" placeholder="Tell the world a bit about who you are…" oninput="validateAbout(this)"></textarea>
+          <span class="error-msg" id="about-err">Please write at least 20 characters.</span>
+          <span class="success-msg" id="about-ok">Nice intro!</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-reset" onclick="resetForm()">Reset</button>
+      <button class="btn btn-submit" onclick="submitForm()">Submit Profile →</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">✔ Profile submitted successfully!</div>
+
+<script>
+  // --- Helpers ---
+  function setValidity(input, errId, okId, valid) {
+    input.classList.toggle('valid', valid);
+    input.classList.toggle('invalid', !valid);
+    if (errId) {
+      const e = document.getElementById(errId);
+      if (e) e.style.display = valid ? 'none' : 'flex';
+    }
+    if (okId) {
+      const o = document.getElementById(okId);
+      if (o) o.style.display = valid ? 'flex' : 'none';
+    }
+  }
+
+  // --- Validations ---
+  function validateName(el) {
+    setValidity(el, 'fullName-err', 'fullName-ok', el.value.trim().length >= 3);
+  }
+
+  function validateEmail(el) {
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+    setValidity(el, 'email-err', 'email-ok', ok);
+  }
+
+  function validatePassword(el) {
+    const v = el.value;
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+
+    const colors = ['', '#ff5e6c', '#ffb347', '#f9e85a', '#4af09a'];
+    const labels = ['—', 'Weak', 'Fair', 'Good', 'Strong'];
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById('s' + i).style.background = i <= score ? colors[score] : 'var(--border)';
+    }
+    document.getElementById('strengthLabel').textContent = labels[score];
+    document.getElementById('strengthLabel').style.color = colors[score] || 'var(--muted)';
+
+    const ok = score >= 3;
+    setValidity(el, 'password-err', null, ok);
+  }
+
+  function togglePw() {
+    const el = document.getElementById('password');
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+
+  function validatePhone(el) {
+    const ok = /^[\+\d][\d\s\-]{7,14}$/.test(el.value.trim());
+    setValidity(el, 'phone-err', 'phone-ok', ok);
+  }
+
+  function validateDob(el) {
+    const dob = new Date(el.value);
+    const age = (Date.now() - dob) / (1000 * 60 * 60 * 24 * 365.25);
+    setValidity(el, 'dob-err', 'dob-ok', age >= 13);
+  }
+
+  function validateGender() {
+    const checked = document.querySelector('input[name="gender"]:checked');
+    const err = document.getElementById('gender-err');
+    err.style.display = checked ? 'none' : 'flex';
+  }
+
+  function validateRequired(el, errId, okId, msg) {
+    setValidity(el, errId, okId, el.value.trim().length > 0);
+  }
+
+  function validateSelect(el, errId) {
+    const ok = el.value !== '';
+    el.classList.toggle('invalid', !ok);
+    document.getElementById(errId).style.display = ok ? 'none' : 'flex';
+  }
+
+  function validatePincode(el) {
+    const ok = /^\d{4,10}$/.test(el.value.trim());
+    setValidity(el, 'pincode-err', 'pincode-ok', ok);
+  }
+
+  function validateHobbies() {
+    const checked = document.querySelectorAll('input[name="hobbies"]:checked').length;
+    const ok = checked >= 2;
+    document.getElementById('hobbies-err').style.display = ok ? 'none' : 'flex';
+    document.getElementById('hobbies-ok').style.display = ok ? 'flex' : 'none';
+  }
+
+  function validateURL(el, errId, okId) {
+    if (!el.value.trim()) { setValidity(el, errId, okId, true); return; }
+    try {
+      const u = new URL(el.value.trim());
+      setValidity(el, errId, okId, u.protocol === 'https:' || u.protocol === 'http:');
+    } catch { setValidity(el, errId, okId, false); }
+  }
+
+  function validateAbout(el) {
+    setValidity(el, 'about-err', 'about-ok', el.value.trim().length >= 20);
+  }
+
+  // --- Photo preview ---
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('photoPreview');
+        preview.innerHTML = `<img src="${e.target.result}" alt="preview">`;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // --- Multi-select ---
+  const selectedSkills = new Set();
+
+  function toggleMs() {
+    const dd = document.getElementById('msDropdown');
+    dd.classList.toggle('open');
+  }
+
+  document.addEventListener('click', e => {
+    const ms = document.querySelector('.multi-select');
+    if (!ms.contains(e.target)) document.getElementById('msDropdown').classList.remove('open');
+  });
+
+  function toggleSkill(el, skill) {
+    if (selectedSkills.has(skill)) {
+      selectedSkills.delete(skill);
+      el.classList.remove('selected');
+    } else {
+      selectedSkills.add(skill);
+      el.classList.add('selected');
+    }
+    renderTags();
+    const ok = selectedSkills.size > 0;
+    document.getElementById('skills-err').style.display = ok ? 'none' : 'flex';
+    document.getElementById('skills-ok').style.display = ok ? 'flex' : 'none';
+  }
+
+  function renderTags() {
+    const container = document.getElementById('msTags');
+    const placeholder = document.getElementById('msPlaceholder');
+    const existing = container.querySelectorAll('.ms-tag');
+    existing.forEach(t => t.remove());
+    placeholder.style.display = selectedSkills.size === 0 ? 'inline' : 'none';
+    selectedSkills.forEach(skill => {
+      const tag = document.createElement('div');
+      tag.className = 'ms-tag';
+      tag.innerHTML = `${skill}<button onclick="removeSkill('${skill}');event.stopPropagation()">✕</button>`;
+      container.insertBefore(tag, placeholder);
+    });
+  }
+
+  function removeSkill(skill) {
+    selectedSkills.delete(skill);
+    document.querySelectorAll('.ms-option').forEach(el => {
+      if (el.textContent.trim().startsWith(skill)) el.classList.remove('selected');
+    });
+    renderTags();
+  }
+
+  // --- Submit & Reset ---
+  function submitForm() {
+    let valid = true;
+
+    const fullName = document.getElementById('fullName');
+    if (fullName.value.trim().length < 3) { validateName(fullName); valid = false; }
+
+    const email = document.getElementById('email');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { validateEmail(email); valid = false; }
+
+    const password = document.getElementById('password');
+    let ps = 0;
+    if (password.value.length >= 8) ps++;
+    if (/[0-9]/.test(password.value)) ps++;
+    if (/[^A-Za-z0-9]/.test(password.value)) ps++;
+    if (ps < 2) { password.classList.add('invalid'); document.getElementById('password-err').style.display = 'flex'; valid = false; }
+
+    const phone = document.getElementById('phone');
+    if (!/^[\+\d][\d\s\-]{7,14}$/.test(phone.value.trim())) { validatePhone(phone); valid = false; }
+
+    const dob = document.getElementById('dob');
+    if (!dob.value) { validateDob(dob); valid = false; }
+
+    if (!document.querySelector('input[name="gender"]:checked')) {
+      document.getElementById('gender-err').style.display = 'flex'; valid = false;
+    }
+
+    ['address','city','state'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) { el.classList.add('invalid'); document.getElementById(id+'-err').style.display = 'flex'; valid = false; }
+    });
+
+    const country = document.getElementById('country');
+    if (!country.value) { validateSelect(country, 'country-err'); valid = false; }
+
+    const pincode = document.getElementById('pincode');
+    if (!/^\d{4,10}$/.test(pincode.value.trim())) { validatePincode(pincode); valid = false; }
+
+    if (document.querySelectorAll('input[name="hobbies"]:checked').length < 2) {
+      document.getElementById('hobbies-err').style.display = 'flex'; valid = false;
+    }
+
+    if (selectedSkills.size === 0) {
+      document.getElementById('skills-err').style.display = 'flex'; valid = false;
+    }
+
+    const about = document.getElementById('about');
+    if (about.value.trim().length < 20) { validateAbout(about); valid = false; }
+
+    if (valid) {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    } else {
+      const firstInvalid = document.querySelector('.invalid, input[name="gender"]');
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function resetForm() {
+    document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="file"])').forEach(el => {
+      el.value = '';
+      el.classList.remove('valid','invalid');
+    });
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+    document.querySelectorAll('textarea').forEach(el => { el.value = ''; el.classList.remove('valid','invalid'); });
+    document.getElementById('country').value = '';
+    selectedSkills.clear();
+    renderTags();
+    document.querySelectorAll('.error-msg, .success-msg').forEach(el => el.style.display = 'none');
+    document.getElementById('photoPreview').innerHTML = '📷';
+    document.getElementById('strengthLabel').textContent = '—';
+    document.querySelectorAll('.strength-bar span').forEach(s => s.style.background = 'var(--border)');
+    document.querySelectorAll('.ms-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById('msPlaceholder').style.display = 'inline';
+  }
+</script>
+</body>
+</html>
