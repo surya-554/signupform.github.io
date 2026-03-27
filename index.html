@@ -959,8 +959,32 @@
     renderTags();
   }
 
+  // =============================================
+  //  SUPABASE CONFIG — replace with your values
+  // =============================================
+  const SUPABASE_URL     = 'https://mcognhjcudzopevxqmiq.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_XphQstjIyfcN8ijxTS0VMQ_auItpI5U';
+
+  async function saveToSupabase(payload) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':         SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer':        'return=representation'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Supabase insert failed');
+    }
+    return res.json();
+  }
+
   // --- Submit & Reset ---
-  function submitForm() {
+  async function submitForm() {
     let valid = true;
 
     const fullName = document.getElementById('fullName');
@@ -1008,13 +1032,58 @@
     const about = document.getElementById('about');
     if (about.value.trim().length < 20) { validateAbout(about); valid = false; }
 
-    if (valid) {
+    if (!valid) {
+      const firstInvalid = document.querySelector('.invalid');
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Build payload matching your Supabase `profiles` table columns
+    const payload = {
+      full_name:  fullName.value.trim(),
+      email:      email.value.trim(),
+      password:   password.value,           // ⚠️ hash this server-side in production
+      phone:      phone.value.trim(),
+      dob:        dob.value,
+      gender:     document.querySelector('input[name="gender"]:checked').value,
+      address:    document.getElementById('address').value.trim(),
+      city:       document.getElementById('city').value.trim(),
+      state:      document.getElementById('state').value.trim(),
+      country:    country.value,
+      pincode:    pincode.value.trim(),
+      hobbies:    [...document.querySelectorAll('input[name="hobbies"]:checked')].map(el => el.value),
+      skills:     [...selectedSkills],
+      about:      about.value.trim(),
+      linkedin:   document.getElementById('linkedin').value.trim() || null,
+      portfolio:  document.getElementById('portfolio').value.trim() || null,
+    };
+
+    // Disable button & show loading state
+    const btn = document.querySelector('.btn-submit');
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+
+    try {
+      await saveToSupabase(payload);
+
+      // Show success toast
       const toast = document.getElementById('toast');
+      toast.textContent = '✔ Profile saved to database!';
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 3500);
-    } else {
-      const firstInvalid = document.querySelector('.invalid, input[name="gender"]');
-      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      resetForm();
+
+    } catch (err) {
+      // Show error toast
+      const toast = document.getElementById('toast');
+      toast.style.background = 'var(--error)';
+      toast.textContent = '✕ ' + err.message;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); toast.style.background = ''; }, 4000);
+
+    } finally {
+      btn.textContent = 'Submit Profile →';
+      btn.disabled = false;
     }
   }
 
